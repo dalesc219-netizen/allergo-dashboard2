@@ -1,0 +1,325 @@
+/* c:\Users\sudarikovia\Desktop\test\src\App.css */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-main: #000000;
+  --bg-card: #1c1c1e;
+  --text-main: #ffffff;
+  --text-secondary: #8e8e93;
+  --accent: #0a84ff;
+  --safe: #32D74B;
+  --warning: #FFD60A;
+  --high: #FF9F0A;
+  --critical: #FF453A;
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Шапка приложения */
+.header {
+  padding: 16px 16px 8px;
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 10;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.date-text {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Переключатель вкладок */
+.segment-control {
+  display: flex;
+  position: relative;
+  background: #1c1c1e;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.segment-btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 0;
+  z-index: 1;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.segment-btn.active {
+  color: var(--text-main);
+}
+
+.segment-indicator {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  background: #3a3a3c;
+  border-radius: 6px;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Основной контент и карточки */
+.views-wrapper {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.views-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.view-pane {
+  min-width: 100%;
+  height: 100%;
+  padding: 16px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--glass-border);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  margin: 0 0 16px 0;
+}
+
+/* Контейнер графиков */
+.chart-container {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+/* Элементы списка пыльцы */
+.pollen-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pollen-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pollen-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pollen-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pollen-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.pollen-value {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.risk-badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Инсайты / Комментарии */
+.insight-comment {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Легенда графиков */
+.custom-legend-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 24px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* Скрываем скроллбар для красоты */
+.custom-legend-container::-webkit-scrollbar {
+  display: none;
+}
+
+.legend-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 90px;
+}
+
+.legend-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-main, #FFFFFF);
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary, #8E8E93);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.legend-item:hover {
+  opacity: 0.8;
+}
+
+.legend-item.hidden-dataset {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.legend-color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Таблица сводки */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.summary-table th, .summary-table td {
+  padding: 12px 6px;
+  border-bottom: 1px solid var(--glass-border);
+  text-align: left;
+}
+
+.summary-table th {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Разное */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.add-data-btn {
+  background: var(--safe);
+  border: none;
+  color: #000;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

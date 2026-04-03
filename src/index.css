@@ -1,0 +1,641 @@
+:root {
+    /* Apple Dark Theme Colors */
+    --bg-color: #000000;
+    --surface-color: rgba(28, 28, 30, 0.65);
+    --surface-solid: #1C1C1E;
+    --text-main: #FFFFFF;
+    --text-secondary: #EBEBF599;
+    --accent: #0A84FF;
+    
+    /* Risk Colors */
+    --safe: #32D74B;
+    --warning: #FFD60A;
+    --high: #FF9F0A;
+    --critical: #FF453A;
+    --burgundy: #8A0303;
+
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+}
+
+.header {
+    padding: max(50px, env(safe-area-inset-top)) 20px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 100;
+    border-bottom: 0.5px solid var(--glass-border);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: nowrap;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.app-title {
+    font-size: clamp(18px, 5.5vw, 24px);
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.segment-control {
+    display: flex;
+    background: var(--surface-solid);
+    border-radius: 9px;
+    padding: 2px;
+    position: relative;
+}
+
+.segment-btn {
+    flex: 1;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: none;
+    background: transparent;
+    z-index: 2;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.segment-btn.active {
+    color: var(--text-main);
+}
+
+.segment-indicator {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: calc(50% - 2px);
+    background: #636366;
+    border-radius: 7px;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.views-wrapper {
+    flex: 1;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+}
+
+.view-pane {
+    min-width: 100vw;
+    width: 100vw;
+    scroll-snap-align: start;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.card {
+    background: var(--surface-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
+    /* Стили для анимации */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.risk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.risk-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.pollen-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pollen-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+}
+
+.pollen-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pollen-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.pollen-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.pollen-value {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.pollen-trend {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.pollen-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.custom-legend-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 24px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* Скрываем скроллбар для красоты */
+.custom-legend-container::-webkit-scrollbar {
+  display: none;
+}
+
+.legend-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 90px;
+}
+
+.legend-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-main, #FFFFFF);
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary, #8E8E93);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.legend-item:hover {
+  opacity: 0.8;
+}
+
+.legend-item.hidden-dataset {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.legend-color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* --- НОВЫЙ UI МОДАЛЬНОГО ОКНА --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2); border-radius: 22px; transition: .3s;
+}
+.toggle-switch .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px;
+    left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s;
+}
+.toggle-switch input:checked + .slider { background-color: var(--safe); }
+.toggle-switch input:checked + .slider:before { transform: translateX(18px); }
+
+.allergen-input-group { margin-bottom: 20px; text-align: left; }
+.allergen-input-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
+
+.prev-value-badge {
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(10, 132, 255, 0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+}
+.prev-value-badge:active { opacity: 0.7; }
+
+.input-wrapper { position: relative; }
+.data-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s, color 0.2s;
+}
+.data-input:focus { border-color: var(--accent); }
+.data-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+.data-input:disabled { opacity: 0.3; background: rgba(0,0,0,0.3); border-color: transparent; cursor: not-allowed; color: transparent; }
+
+/* Янтарные уведомления */
+.data-input.amber-border { border-color: var(--high); color: var(--high); }
+.warning-icon { position: absolute; right: 12px; top: 12px; color: var(--high); display: none; pointer-events: none; }
+.data-input.amber-border + .warning-icon { display: block; }
+.amber-alert-text { font-size: 11px; color: var(--high); margin-top: 6px; display: none; line-height: 1.3; }
+
+/* Аккордеон "Остальные" */
+.season-accordion { margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 15px; }
+.season-header { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); cursor: pointer; align-items: center; padding: 5px 0; }
+.season-content { display: none; margin-top: 15px; }
+.season-content.open { display: block; }
+
+.login-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 16px;
+    width: 100%;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+.login-btn:active {
+    transform: scale(0.95);
+    background: #0071e3;
+}
+.login-btn:disabled { background: #333333; color: #888888; cursor: not-allowed; transform: none; }
+
+/* Стили для кастомного тултипа на графике */
+#custom-chart-tooltip, #weather-chart-tooltip {
+    position: absolute;
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    pointer-events: auto;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    min-width: 145px;
+}
+
+#weather-chart-tooltip {
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* Кнопка добавления данных */
+.add-data-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-main);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-data-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.summary-table th {
+    text-align: left;
+    padding-bottom: 10px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.summary-table td {
+    padding: 12px 0;
+    border-top: 0.5px solid var(--glass-border);
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.date-text {
+    color: var(--text-secondary);
+    font-size: clamp(10px, 3vw, 14px);
+    font-weight: 500;
+}
+
+.header-weather {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: clamp(4px, 1.5vw, 10px);
+    font-size: clamp(10px, 3vw, 13px);
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.weather-stat-mini {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+@keyframes anim-temp {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+@keyframes anim-wind {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(2px) rotate(5deg); }
+}
+@keyframes anim-drop {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-2px) scale(0.95); }
+}
+
+.icon-temp { animation: anim-temp 3s infinite ease-in-out; color: var(--critical); }
+.icon-wind { animation: anim-wind 2.5s infinite ease-in-out; color: var(--safe); }
+.icon-drop { animation: anim-drop 2s infinite ease-in-out; color: var(--accent); }
+
+.pollen-anim-icon {
+    animation: pollen-sway 3s infinite ease-in-out;
+    transform-origin: bottom center;
+}
+@keyframes pollen-sway {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(8deg) scale(1.05); }
+}
+
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
+}
+
+.login-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.login-card {
+    background: var(--surface-color);
+    border: 0.5px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px 20px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.password-input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    margin: 25px 0 5px;
+    outline: none;
+    letter-spacing: 10px;
+    transition: border-color 0.2s;
+}
+
+.password-input:focus {
+    border-color: var(--accent);
+}
+
+.error-text {
+    color: var(--critical);
+    font-size: 13px;
+    min-height: 18px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.error-text.show {
+    opacity: 1;
+}
+
+.shake {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+.insight-comment {
+    background: rgba(255,255,255,0.05);
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    border-left: 3px solid var(--accent);
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .header {
+        padding: max(15px, env(safe-area-inset-top)) 20px 10px;
+    }
+    .header-top {
+        margin-bottom: 10px;
+    }
+    .app-title {
+        font-size: 18px;
+    }
+    .card {
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    .chart-container {
+        height: 160px;
+    }
+    .views-wrapper {
+        padding-bottom: 20px;
+    }
+}
+
+.chart-type-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #8E8E93);
+}
+
+.icon-btn:hover {
+  color: #FFFFFF;
+  transform: scale(1.1); /* Лёгкая анимация увеличения при наведении */
+}
+
+.icon-btn.active {
+  background: #48484A;
+  color: #64D2FF; /* Ненавязчивый голубой акцент для активного состояния */
+  transform: scale(1); /* Возвращаем масштаб в норму для активной кнопки */
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
