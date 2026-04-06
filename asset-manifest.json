@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/allergo-dashboard2/static/css/main.b09eda39.css",
-    "main.js": "/allergo-dashboard2/static/js/main.6092e4cc.js",
+    "main.css": "/allergo-dashboard2/static/css/main.074e3aae.css",
+    "main.js": "/allergo-dashboard2/static/js/main.08a43dab.js",
     "static/js/488.9624bc40.chunk.js": "/allergo-dashboard2/static/js/488.9624bc40.chunk.js",
     "service-worker.js": "/allergo-dashboard2/service-worker.js",
     "index.html": "/allergo-dashboard2/index.html",
-    "main.b09eda39.css.map": "/allergo-dashboard2/static/css/main.b09eda39.css.map",
-    "main.6092e4cc.js.map": "/allergo-dashboard2/static/js/main.6092e4cc.js.map",
+    "main.074e3aae.css.map": "/allergo-dashboard2/static/css/main.074e3aae.css.map",
+    "main.08a43dab.js.map": "/allergo-dashboard2/static/js/main.08a43dab.js.map",
     "488.9624bc40.chunk.js.map": "/allergo-dashboard2/static/js/488.9624bc40.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b09eda39.css",
-    "static/js/main.6092e4cc.js"
+    "static/css/main.074e3aae.css",
+    "static/js/main.08a43dab.js"
   ]
 }
