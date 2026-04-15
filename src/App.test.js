@@ -11,6 +11,10 @@ jest.mock('./firebase', () => ({
 jest.mock('firebase/firestore', () => ({
   doc: jest.fn(),
   setDoc: jest.fn(),
+  collection: jest.fn(),
+  getDocs: jest.fn(() => Promise.resolve([])),
+  query: jest.fn(),
+  orderBy: jest.fn(),
 }));
 
 describe('App component', () => {

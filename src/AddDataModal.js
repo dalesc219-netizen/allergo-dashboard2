@@ -15,7 +15,8 @@ const ALLERGENS = [
 ];
 
 const AddDataModal = ({ isOpen, onClose, editData, onSuccess, historyData = [] }) => {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const [date, setDate] = useState(todayStr);
   const [values, setValues] = useState({ alder: "", hazel: "", birch: "", oak: "", grass: "", weed: "", clado: "", alt: "" });
   const [saveError, setSaveError] = useState("");
@@ -24,6 +25,7 @@ const AddDataModal = ({ isOpen, onClose, editData, onSuccess, historyData = [] }
   const [isWeekend, setIsWeekend] = useState(false);
   const [prevData, setPrevData] = useState(null);
   const [weather, setWeather] = useState("Загрузка...");
+  const [weatherStats, setWeatherStats] = useState(null);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
   // При открытии окна сбрасываем ошибки и заполняем данные (если это редактирование)
@@ -33,6 +35,7 @@ const AddDataModal = ({ isOpen, onClose, editData, onSuccess, historyData = [] }
       setSaveLoading(false);
       setIsWeekend(false);
       setIsAccordionOpen(false);
+      setWeatherStats(null);
       if (editData) {
         setDate(editData.date);
         setValues({
@@ -72,18 +75,34 @@ const AddDataModal = ({ isOpen, onClose, editData, onSuccess, historyData = [] }
       setWeather("Загрузка...");
       const fetchW = async () => {
         try {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&daily=temperature_2m_max,precipitation_sum&timezone=Europe%2FMoscow&start_date=${date}&end_date=${date}`;
+          const today = new Date();
+          const target = new Date(date);
+          const diffDays = (today - target) / (1000 * 60 * 60 * 24);
+          // Open-Meteo требует использования archive API для старых дат (>60 дней)
+          const baseUrl = diffDays > 60 ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
+          
+          const url = `${baseUrl}?latitude=55.75&longitude=37.62&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&hourly=relative_humidity_2m&timezone=Europe%2FMoscow&start_date=${date}&end_date=${date}&windspeed_unit=ms`;
           const res = await fetch(url);
           const wData = await res.json();
-          if (wData?.daily?.temperature_2m_max?.length > 0) {
-            const temp = wData.daily.temperature_2m_max[0];
-            const precip = wData.daily.precipitation_sum[0];
-            setWeather(`${temp > 0 ? '+' : ''}${Math.round(temp)}°C${precip > 0 ? ', осадки: ' + precip + 'мм' : ''}`);
+          if (wData?.daily?.temperature_2m_max?.length > 0 && wData.daily.temperature_2m_max[0] !== null) {
+            const tempMax = wData.daily.temperature_2m_max[0];
+            const tempMin = wData.daily.temperature_2m_min[0];
+            const precip = wData.daily.precipitation_sum[0] || 0;
+            const wind = wData.daily.windspeed_10m_max[0] || 0;
+            
+            const humArr = wData.hourly?.relative_humidity_2m || [];
+            const humidity = humArr.length > 0 ? Math.round(humArr.reduce((a,b) => a + b, 0) / humArr.length) : null;
+            const tempAvg = Math.round((tempMax + tempMin) / 2);
+
+            setWeather(`${tempMax > 0 ? '+' : ''}${Math.round(tempMax)}°C${precip > 0 ? ', осадки: ' + precip + 'мм' : ''}`);
+            setWeatherStats({ tempAvg, precip, windMax: Math.round(wind), humidity });
           } else {
             setWeather("Нет данных");
+            setWeatherStats(null);
           }
         } catch(e) {
           setWeather("Ошибка API");
+          setWeatherStats(null);
         }
       };
       fetchW();
@@ -126,6 +145,20 @@ const AddDataModal = ({ isOpen, onClose, editData, onSuccess, historyData = [] }
         clado: values.clado === "" ? 0 : Number(values.clado),
         alt: values.alt === "" ? 0 : Number(values.alt)
       };
+        
+        // Сохраняем новые данные погоды (если API ответил), либо сохраняем уже имеющиеся при редактировании
+        if (weatherStats) {
+          dataObj.tempAvg = weatherStats.tempAvg;
+          dataObj.precip = weatherStats.precip;
+          dataObj.windMax = weatherStats.windMax;
+          dataObj.humidity = weatherStats.humidity;
+        } else if (editData) {
+          if (editData.tempAvg !== undefined) dataObj.tempAvg = editData.tempAvg;
+          if (editData.precip !== undefined) dataObj.precip = editData.precip;
+          if (editData.windMax !== undefined) dataObj.windMax = editData.windMax;
+          if (editData.humidity !== undefined) dataObj.humidity = editData.humidity;
+        }
+
       await setDoc(doc(db, 'measurements', date), dataObj);
       onSuccess();
       onClose();

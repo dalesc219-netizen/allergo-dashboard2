@@ -28,10 +28,9 @@ body {
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   max-width: 100%;
   margin: 0 auto;
-  overflow: hidden;
 }
 
 /* Шапка приложения */
@@ -39,7 +38,7 @@ body {
   padding: 16px 16px 8px;
   background-color: var(--bg-main);
   border-bottom: 1px solid var(--glass-border);
-  z-index: 10;
+  z-index: 50; /* Увеличено до 50 для надежного перекрытия графиков */
 }
 
 .header-top {
@@ -108,9 +107,7 @@ body {
 /* Основной контент и карточки */
 .views-wrapper {
   display: flex;
-  flex: 1;
   overflow-x: auto;
-  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
@@ -121,9 +118,7 @@ body {
 
 .view-pane {
   min-width: 100%;
-  height: 100%;
   padding: 16px;
-  overflow-y: auto;
   box-sizing: border-box;
   scroll-snap-align: start;
   display: flex;
@@ -154,11 +149,60 @@ body {
   margin: 0 0 16px 0;
 }
 
+/* Обёртка для горизонтального скролла графиков */
+.chart-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* Плавный скролл на мобильных устройствах iOS */
+  padding-bottom: 5px; /* Немного места для визуального ползунка скролла (на десктопе) */
+}
+
 /* Контейнер графиков */
 .chart-container {
   position: relative;
-  height: 250px;
-  width: 100%;
+  height: 40vh;
+  min-height: 300px;
+  min-width: 800px; /* Не даем графику сжаться меньше этой ширины, вызывая появление скролла */
+  margin-top: 10px; /* Добавляем немного места сверху для тултипа */
+}
+
+/* Улучшаем пропорции графиков на экранах мобильных телефонов */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 50vh; /* Увеличена высота для мобильных */
+    min-height: 350px;
+  }
+}
+
+/* Кастомный горизонтальный скроллбар для графиков */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px; /* Делаем скроллбар тонким и аккуратным */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02); /* Едва заметный фон трека */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Полупрозрачный ползунок */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4); /* Подсветка при наведении на десктопе */
+}
+
+/* Выводим всплывающее окно поверх всех элементов графика */
+.recharts-tooltip-wrapper {
+  z-index: 100 !important;
+  pointer-events: none;
 }
 
 /* Элементы списка пыльцы */
@@ -254,20 +298,20 @@ body {
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary, #8E8E93);
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
 }
 
 .legend-item:hover {
-  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .legend-item.hidden-dataset {
-  opacity: 0.35;
-  text-decoration: line-through;
+  opacity: 0.4;
 }
 
 .legend-color-box {
@@ -275,6 +319,13 @@ body {
   height: 12px;
   border-radius: 3px;
   flex-shrink: 0;
+}
+
+.legend-label {
+  white-space: nowrap;
+  font-size: clamp(13px, 3.5vw, 15px); /* Адаптивный размер от 13px до 15px */
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 /* Таблица сводки */
@@ -322,4 +373,122 @@ body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+/* =========================================
+   СТИЛИ ДЛЯ ПАНЕЛИ ФИЛЬТРОВ (APPLE GLASS)
+   ========================================= */
+.filter-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 32px;
+  background: rgba(28, 28, 30, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  margin-bottom: 30px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.filter-row:last-child { margin-bottom: 0; }
+
+.filter-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 90px;
+}
+
+.filter-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  transform: scale(0.95);
+}
+
+.filter-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Компактный вид фильтров на мобильных экранах */
+@media (max-width: 640px) {
+  .filter-panel {
+    padding: 16px;
+  }
+  .filter-row {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .filter-btn-group {
+    gap: 6px;
+  }
+  .filter-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Контролы графиков (адаптивность) */
+.archive-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.archive-divider {
+  display: none;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 640px) {
+  .archive-controls {
+    margin-top: 0;
+  }
+  .archive-divider {
+    display: block;
+  }
 }
